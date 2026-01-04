@@ -3,7 +3,7 @@
 * [Home](/)
 
 * **Services**
-  * [Overview](Services/index.md)
+  * [Overview](Services/)
   * [PlayerService](Services/PlayerService.md)
   * [MessageService](Services/MessageService.md)
   * [AdminService](Services/AdminService.md)
@@ -20,18 +20,18 @@
   * [RevealMapService](Services/RevealMapService.md)
 
 * **Systems**
-  * [Overview](Systems/index.md)
+  * [Overview](Systems/)
   * [ActionScheduler](Systems/ActionScheduler.md)
   * [GameSystems](Systems/GameSystems.md)
 
 * **Events**
-  * [Overview](Events/index.md)
+  * [Overview](Events/)
   * [Event Types](Events/EventTypes.md)
   * [Event Priority](Events/EventPriority.md)
   * [Examples](Events/Examples.md)
 
 * **Commanding**
-  * [Overview](Commanding/index.md)
+  * [Overview](Commanding/)
   * [CommandHandler](Commanding/CommandHandler.md)
   * [CommandAttributes](Commanding/CommandAttributes.md)
   * [CommandContext](Commanding/CommandContext.md)
@@ -39,7 +39,7 @@
   * [Examples](Commanding/Examples.md)
 
 * **Data**
-  * [Overview](Data/index.md)
+  * [Overview](Data/)
   * [Database](Data/Database.md)
   * [JsonDatabase](Data/JsonDatabase.md)
   * [SharedDatabase](Data/SharedDatabase.md)
@@ -47,10 +47,10 @@
   * [Examples](Data/Examples.md)
 
 * **Localization**
-  * [Localization](Localization/Localization.md)
+  * [Localization](Localization/)
 
 * **Utils**
-  * [Overview](Utils/index.md)
+  * [Overview](Utils/)
   * [Logger](Utils/Logger.md)
   * [MathUtility](Utils/MathUtility.md)
   * [RichTextFormatter](Utils/RichTextFormatter.md)

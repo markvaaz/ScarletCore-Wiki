@@ -158,7 +158,7 @@ Each service documentation includes:
 
 ## Additional Resources
 
-- [Systems Documentation](../Systems/) — Core game systems access
-- [Extensions](../Extensions.md) — ECS, Localization, and PlayerData extensions
-- [Utils](../Utils/) — Logger, MathUtility, RichTextFormatter, Symbols
-- [Events](../Events/) — Event system documentation
+- [Systems Documentation](/Systems/) — Core game systems access
+- [Extensions](/Extensions.md) — ECS, Localization, and PlayerData extensions
+- [Utils](/Utils/) — Logger, MathUtility, RichTextFormatter, Symbols
+- [Events](/Events/) — Event system documentation

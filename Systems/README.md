@@ -161,10 +161,10 @@ Each system documentation includes:
 
 ## Additional Resources
 
-- [Services Documentation](../Services/) — High-level service APIs built on these systems
-- [Extensions](../Extensions.md) — ECS extensions for cleaner entity operations
-- [Events](../Events/) — Event system built on ActionScheduler and GameSystems
-- [Utils](../Utils/) — Supporting utilities (Logger, MathUtility, etc.)
+- [Services Documentation](/Services/) — High-level service APIs built on these systems
+- [Extensions](/Extensions.md) — ECS extensions for cleaner entity operations
+- [Events](/Events/) — Event system built on ActionScheduler and GameSystems
+- [Utils](/Utils/) — Supporting utilities (Logger, MathUtility, etc.)
 
 ---
 

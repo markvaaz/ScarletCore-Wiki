@@ -232,10 +232,10 @@ Each utility documentation includes:
 
 ## Additional Resources
 
-- [Services Documentation](../Services/) — High-level APIs that use these utilities
-- [Systems Documentation](../Systems/) — Core systems (GameSystems, ActionScheduler)
-- [Extensions](../Extensions.md) — ECS, Localization, and PlayerData extensions
-- [Events](../Events/) — Event system documentation
+- [Services Documentation](/Services/) — High-level APIs that use these utilities
+- [Systems Documentation](/Systems/) — Core systems (GameSystems, ActionScheduler)
+- [Extensions](/Extensions.md) — ECS, Localization, and PlayerData extensions
+- [Events](/Events/) — Event system documentation
 
 ---
 

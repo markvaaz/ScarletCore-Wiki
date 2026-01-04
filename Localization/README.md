@@ -1,4 +1,3 @@
-````markdown
 # Localization (Localizer)
 
 This page documents how to provide translations for ScarletCore-powered mods and how to use the `Localizer` API.
@@ -79,5 +78,3 @@ The built-in `PrefabToGuidMap.json` maps game prefab hashes to localization GUID
 **See also**
 - `Localization/PrefabToGuidMap.json` — included prefab mappings (embedded resource).
 - `CommandContext.ReplyLocalized` — helper for sending localized replies from commands.
-
-````
