@@ -100,7 +100,6 @@ ActionScheduler automatically cleans up completed actions. Manual cancellation i
 - **BepInEx.Unity.IL2CPP** — IL2CPP plugin framework
 - **Unity.Entities** — ECS foundation
 - **ProjectM** — V Rising game assemblies
-- **Bloodstone** — Additional server utilities
 
 ### ActionScheduler Dependencies
 - **Unity Update Loop** — Frame timing

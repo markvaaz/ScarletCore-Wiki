@@ -6,7 +6,7 @@
 
 **Version:** 1.5.x  
 **Game:** V Rising  
-**Framework:** BepInEx + Bloodstone  
+**Framework:** BepInEx
 **Language:** C# (.NET 6.0)
 
 ---
@@ -138,7 +138,6 @@ Data management systems including database abstraction and configuration managem
 ### Installation
 
 1. Install **BepInEx IL2CPP** for V Rising
-2. Install **Bloodstone** mod dependency
 3. Download **ScarletCore** and place in `BepInEx/plugins/`
 4. Start server to generate config files
 
@@ -316,7 +315,6 @@ Check the project repository for licensing information.
 
 **ScarletCore** is built on top of:
 - **BepInEx** — Plugin framework
-- **Bloodstone** — V Rising modding utilities
 - **Unity ECS** — Entity Component System
 - **V Rising** — Game by Stunlock Studios
 
