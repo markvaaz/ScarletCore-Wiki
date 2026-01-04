@@ -1,5 +1,7 @@
 <!-- _sidebar.md -->
 
+* [📝 Report Issues](https://github.com/markvaaz/ScarletCore/issues)
+* [📝 Report Wiki Issues](https://github.com/markvaaz/ScarletCore-Wiki/issues)
 * [Home](/)
 
 * **Services**
