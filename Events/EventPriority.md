@@ -336,13 +336,13 @@ private void JustANormalHandler() {
 // Data must be initialized first
 [EventPriority(EventPriority.VeryHigh)]
 private void InitializePlayerCache(PlayerData player) {
-  _cache[player.SteamID] = new PlayerCache();
+  _cache[player.PlatformId] = new PlayerCache();
 }
 
 // Use the cache (depends on InitializePlayerCache)
 [EventPriority(EventPriority.Normal)]
 private void UpdatePlayerCache(PlayerData player) {
-  var cache = _cache[player.SteamID];  // Safe to use
+  var cache = _cache[player.PlatformId];  // Safe to use
   // Update cache
 }
 ```

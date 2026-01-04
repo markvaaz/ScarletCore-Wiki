@@ -4,6 +4,11 @@
 * [📝 Report Wiki Issues](https://github.com/markvaaz/ScarletCore-Wiki/issues)
 * [Home](/)
 
+* **Getting Started**
+  * [Overview](GettingStarted/)
+  * [Quick Start](GettingStarted/QuickStart.md)
+  * [Your First Mod](GettingStarted/FirstMod.md)
+
 * **Services**
   * [Overview](Services/)
   * [PlayerService](Services/PlayerService.md)

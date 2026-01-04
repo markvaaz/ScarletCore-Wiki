@@ -37,9 +37,9 @@ Adds a player to the ban list and immediately kicks them if they're currently on
 
 **Example:**
 ```csharp
-ulong steamId = 76561198012345678;
-KickBanService.Ban(steamId);
-Log.Info($"Player {steamId} has been banned");
+ulong PlatformId = 76561198012345678;
+KickBanService.Ban(PlatformId);
+Log.Info($"Player {PlatformId} has been banned");
 ```
 
 ### Ban (by PlayerData)
@@ -104,9 +104,9 @@ Removes a player from the ban list, allowing them to rejoin the server.
 
 **Example:**
 ```csharp
-ulong steamId = 76561198012345678;
-KickBanService.Unban(steamId);
-Log.Info($"Player {steamId} has been unbanned");
+ulong PlatformId = 76561198012345678;
+KickBanService.Unban(PlatformId);
+Log.Info($"Player {PlatformId} has been unbanned");
 ```
 
 ### Unban (by PlayerData)
@@ -168,8 +168,8 @@ Checks if a player is currently banned.
 
 **Example:**
 ```csharp
-ulong steamId = 76561198012345678;
-if (KickBanService.IsBanned(steamId)) {
+ulong PlatformId = 76561198012345678;
+if (KickBanService.IsBanned(PlatformId)) {
     Log.Info("This player is banned");
 } else {
     Log.Info("This player is not banned");
@@ -245,9 +245,9 @@ Kicks a player from the server without banning them. The player can reconnect im
 
 **Example:**
 ```csharp
-ulong steamId = 76561198012345678;
-KickBanService.Kick(steamId);
-Log.Info($"Player {steamId} has been kicked");
+ulong PlatformId = 76561198012345678;
+KickBanService.Kick(PlatformId);
+Log.Info($"Player {PlatformId} has been kicked");
 ```
 
 ### Kick (by PlayerData)

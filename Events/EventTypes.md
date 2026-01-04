@@ -121,7 +121,7 @@ Triggered when a player connects to the server.
 ```csharp
 EventManager.On(PlayerEvents.PlayerJoined, (player) => {
   Log.Message($"{player.Name} joined");
-  Log.Message($"SteamID: {player.SteamID}");
+  Log.Message($"PlatformId: {player.PlatformId}");
   player.SendMessage("Welcome to the server!");
 });
 ```

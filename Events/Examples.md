@@ -24,19 +24,19 @@ public class PlayerTracker {
   }
   
   private void OnPlayerJoined(PlayerData player) {
-    Log.Message($"[Tracker] {player.CharacterName} joined the server");
-    Log.Message($"[Tracker] Steam ID: {player.SteamID}");
+    Log.Message($"[Tracker] {player.Name} joined the server");
+    Log.Message($"[Tracker] Steam ID: {player.PlatformId}");
     
     // Send welcome message
-    player.SendMessage($"Welcome, {player.CharacterName}!");
+    player.SendMessage($"Welcome, {player.Name}!");
   }
   
   private void OnPlayerLeft(PlayerData player) {
-    Log.Message($"[Tracker] {player.CharacterName} left the server");
+    Log.Message($"[Tracker] {player.Name} left the server");
   }
   
   private void OnCharacterCreated(PlayerData player) {
-    Log.Message($"[Tracker] New character created: {player.CharacterName}");
+    Log.Message($"[Tracker] New character created: {player.Name}");
     
     // Give starter bonus
     player.SendMessage("Welcome! Here's a starter bonus!");
@@ -179,7 +179,7 @@ public class RewardListener {
   }
   
   private void OnReward(RewardData data) {
-    Log.Message($"{data.Player.CharacterName} received {data.Amount} {data.RewardType}");
+    Log.Message($"{data.Player.Name} received {data.Amount} {data.RewardType}");
     
     // Update UI, statistics, etc.
   }
@@ -221,7 +221,7 @@ public class EconomyMod {
   private void OnQuestCompleted(QuestMod.QuestCompletedData data) {
     // Give gold bonus
     int goldReward = data.ExpReward / 10;
-    Log.Message($"Economy: Giving {goldReward} gold to {data.Player.CharacterName}");
+    Log.Message($"Economy: Giving {goldReward} gold to {data.Player.Name}");
   }
 }
 
@@ -233,7 +233,7 @@ public class StatsMod {
   
   private void OnQuestCompleted(QuestMod.QuestCompletedData data) {
     // Track quest statistics
-    Log.Message($"Stats: Recording quest completion for {data.Player.CharacterName}");
+    Log.Message($"Stats: Recording quest completion for {data.Player.Name}");
   }
 }
 ```
@@ -337,16 +337,16 @@ public class PlayerStateTracker {
   }
   
   private void OnPlayerJoined(PlayerData player) {
-    _playerStates[player.SteamID] = new PlayerState();
-    CheckStateChange(player.SteamID);
+    _playerStates[player.PlatformId] = new PlayerState();
+    CheckStateChange(player.PlatformId);
   }
   
   private void OnPlayerDeath(NativeArray<Entity> entities) {
     // Update state and emit custom event
     foreach (var entity in entities) {
       var player = PlayerService.GetPlayerDataFromEntity(entity);
-      if (player != null && _playerStates.ContainsKey(player.SteamID)) {
-        _playerStates[player.SteamID].IsAlive = false;
+      if (player != null && _playerStates.ContainsKey(player.PlatformId)) {
+        _playerStates[player.PlatformId].IsAlive = false;
         EventManager.Emit("StateTracker:PlayerDied", player);
       }
     }
@@ -356,8 +356,8 @@ public class PlayerStateTracker {
     // Track combat state
     foreach (var entity in entities) {
       var player = PlayerService.GetPlayerDataFromEntity(entity);
-      if (player != null && _playerStates.ContainsKey(player.SteamID)) {
-        var state = _playerStates[player.SteamID];
+      if (player != null && _playerStates.ContainsKey(player.PlatformId)) {
+        var state = _playerStates[player.PlatformId];
         if (!state.IsInCombat) {
           state.IsInCombat = true;
           EventManager.Emit("StateTracker:EnteredCombat", player);
@@ -367,7 +367,7 @@ public class PlayerStateTracker {
     }
   }
   
-  private void CheckStateChange(ulong steamId) {
+  private void CheckStateChange(ulong PlatformId) {
     // Emit state change events
   }
 }
@@ -391,14 +391,14 @@ public class CooldownSystem {
   }
   
   private void OnCooldownStart(CooldownData data) {
-    var key = $"{data.Player.SteamID}_{data.AbilityName}";
+    var key = $"{data.Player.PlatformId}_{data.AbilityName}";
     _cooldowns[key] = DateTime.Now.Add(data.Duration);
     
     Log.Message($"Cooldown started: {data.AbilityName} for {data.Duration.TotalSeconds}s");
   }
   
   private void OnCooldownCheck(CooldownData data) {
-    var key = $"{data.Player.SteamID}_{data.AbilityName}";
+    var key = $"{data.Player.PlatformId}_{data.AbilityName}";
     
     if (!_cooldowns.TryGetValue(key, out var endTime)) {
       EventManager.Emit("Cooldown:Ready", data);
@@ -469,7 +469,7 @@ public class MyPlugin : PluginLoader.IPlugin {
   }
   
   private void OnPlayerJoin(PlayerData player) {
-    Log.Message($"[{Name}] Player joined: {player.CharacterName}");
+    Log.Message($"[{Name}] Player joined: {player.Name}");
   }
 }
 ```
@@ -492,11 +492,11 @@ public class ManagedEventSystem : IDisposable {
   }
   
   private void OnPlayerJoined(PlayerData player) {
-    Log.Message($"Player joined: {player.CharacterName}");
+    Log.Message($"Player joined: {player.Name}");
   }
   
   private void OnPlayerLeft(PlayerData player) {
-    Log.Message($"Player left: {player.CharacterName}");
+    Log.Message($"Player left: {player.Name}");
   }
   
   public void Dispose() {

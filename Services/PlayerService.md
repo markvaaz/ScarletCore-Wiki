@@ -95,8 +95,8 @@ Dictionary for fast player lookup by platform ID (Steam ID, etc.).
 
 **Example:**
 ```csharp
-ulong steamId = 76561198012345678;
-if (PlayerService.PlayerIds.TryGetValue(steamId, out var player)) {
+ulong PlatformId = 76561198012345678;
+if (PlayerService.PlayerIds.TryGetValue(PlatformId, out var player)) {
     MessageService.Send(player, "Found you by platform ID!");
 }
 ```
@@ -139,8 +139,8 @@ Attempts to retrieve a player by their platform ID (Steam ID, etc.).
 
 **Example:**
 ```csharp
-ulong steamId = 76561198012345678;
-if (PlayerService.TryGetById(steamId, out var player)) {
+ulong PlatformId = 76561198012345678;
+if (PlayerService.TryGetById(PlatformId, out var player)) {
     MessageService.Send(player, "Welcome back!");
 } else {
     Log.Warning("Player not found by platform ID");

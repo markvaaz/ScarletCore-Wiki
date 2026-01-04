@@ -22,7 +22,7 @@ When multiple commands match the same input, TypeConverter uses priority scores 
 | `float`, `double` | 90 | Decimal numbers |
 | `enum` | 85 | Case-insensitive enum member |
 | `PrefabGUID` | 80 | Valid prefab GUID |
-| `PlayerData` (numeric ID) | 75 | Player by SteamID |
+| `PlayerData` (numeric ID) | 75 | Player by PlatformId |
 | `float2`, `float3`, `float4`, `quaternion` | 70 | Vector types |
 | `PlayerData` (name) | 60 | Player by name |
 | `string` | 10 | Matches anything (lowest priority) |
@@ -79,7 +79,7 @@ public static void TogglePvP(CommandContext ctx, bool enabled) { }
 ### Game Types
 
 **PlayerData**
-- Can be specified by **name** or **numeric SteamID**
+- Can be specified by **name** or **numeric PlatformId**
 - Numeric ID priority: 75, Name priority: 60
 - Automatically resolves to the PlayerData object
 
