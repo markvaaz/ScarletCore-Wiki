@@ -9,6 +9,9 @@
   * [Quick Start](GettingStarted/QuickStart.md)
   * [Your First Mod](GettingStarted/FirstMod.md)
 
+* **Prefabs**
+  * [Prefabs Browser](Data/Prefabs.md)
+
 * **Services**
   * [Overview](Services/)
   * [PlayerService](Services/PlayerService.md)
