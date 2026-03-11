@@ -322,6 +322,10 @@ Browse, search and filter all available game prefabs. Use the **category sidebar
 }
 
 /* ── Responsive ── */
+@media (max-width: 1249px) {
+  :root { --content-max-width: 95%; }
+}
+
 @media (max-width: 720px) {
   #prefabs-app { flex-direction: column; }
   #prefabs-categories {
@@ -584,5 +588,30 @@ Browse, search and filter all available game prefabs. Use the **category sidebar
     if (currentPage < total) { currentPage++; renderTable(); renderPagination(); }
   });
 
+}());
+</script>
+
+<script>
+// ── Auto-close docsify sidebar on screens < 1250px ──
+(function () {
+  var autoClosed = false;
+
+  function manageSidebar() {
+    var sidebar = document.querySelector('.sidebar');
+    var toggle  = document.querySelector('.sidebar-toggle');
+    if (!sidebar || !toggle) return;
+    var isSmall  = window.innerWidth < 1250;
+    var isClosed = sidebar.classList.contains('close');
+    if (isSmall && !isClosed) {
+      toggle.click();
+      autoClosed = true;
+    } else if (!isSmall && isClosed && autoClosed) {
+      toggle.click();
+      autoClosed = false;
+    }
+  }
+
+  manageSidebar();
+  window.addEventListener('resize', manageSidebar);
 }());
 </script>
