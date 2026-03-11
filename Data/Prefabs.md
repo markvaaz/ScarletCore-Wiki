@@ -351,7 +351,7 @@ Browse, search and filter all available game prefabs. Use the **category sidebar
 
   <section id="prefabs-content">
     <div id="prefabs-controls">
-      <input id="prefabs-search" type="text" placeholder="Search by name, ID or translation…" autocomplete="off" />
+      <input id="prefabs-search" type="text" placeholder="Search… e.g. weapon, chest +t06 -broken" autocomplete="off" />
       <select id="prefabs-lang"><option>Loading…</option></select>
     </div>
     <div id="prefabs-grid">
@@ -505,22 +505,111 @@ Browse, search and filter all available game prefabs. Use the **category sidebar
   }
 
   // ──────────────────────────────────────────────
-  // Filter + render
+  // Filter + rank + render
   // ──────────────────────────────────────────────
-  function applyFilters() {
-    var terms = searchTerm.toLowerCase().split(/\s+/).filter(Boolean);
-    filtered = allData.filter(function (d) {
-      if (currentCategory !== '__all__' && d.category !== currentCategory) return false;
-      if (!terms.length) return true;
-      var name = d.name.toLowerCase();
-      var id = String(d.id);
-      var trans = getTranslation(d).toLowerCase();
-      return terms.every(function (term) {
-        return name.indexOf(term) !== -1 ||
-               id.indexOf(term) !== -1 ||
-               trans.indexOf(term) !== -1;
-      });
+  function scoreItem(d, terms) {
+    var name  = d.name.toLowerCase();
+    var id    = String(d.id);
+    var trans = getTranslation(d).toLowerCase();
+    var total = 0;
+
+    for (var i = 0; i < terms.length; i++) {
+      var t = terms[i];
+      var s = 0;
+      var matched = false;
+
+      // Name: exact > starts-with > word-boundary > contains
+      if (name === t)                   { s += 100; matched = true; }
+      else if (name.indexOf(t) === 0)   { s +=  70; matched = true; }
+      else if (name.indexOf('_' + t) !== -1) { s += 55; matched = true; }
+      else if (name.indexOf(t) !== -1)  { s +=  40; matched = true; }
+
+      // ID: exact > contains
+      if (id === t)                     { s +=  90; matched = true; }
+      else if (id.indexOf(t) !== -1)    { s +=  30; matched = true; }
+
+      // Translation: exact > starts-with > contains
+      if (trans === t)                  { s +=  80; matched = true; }
+      else if (trans.indexOf(t) === 0)  { s +=  50; matched = true; }
+      else if (trans.indexOf(t) !== -1) { s +=  20; matched = true; }
+
+      if (!matched) return -1;  // term not found at all → exclude item
+      total += s;
+    }
+    return total;
+  }
+
+  // Parse "weapon, chest +item +t06 -broken" into groups/required/excluded
+  function parseSearch(raw) {
+    var globalRequired = [];
+    var globalExcluded = [];
+
+    // Collect all +/- tokens from the entire input
+    raw.split(/\s+/).forEach(function (tok) {
+      if (tok.length < 2) return;
+      if (tok[0] === '+') globalRequired.push(tok.slice(1).toLowerCase());
+      else if (tok[0] === '-') globalExcluded.push(tok.slice(1).toLowerCase());
     });
+
+    // Split by comma into groups; strip +/- tokens from each group's regular terms
+    var groups = raw.split(',').map(function (g) {
+      return g.trim().split(/\s+/).filter(function (t) {
+        return t && t[0] !== '+' && t[0] !== '-';
+      }).map(function (t) { return t.toLowerCase(); });
+    }).filter(function (g) { return g.length > 0; });
+
+    return { groups: groups, required: globalRequired, excluded: globalExcluded };
+  }
+
+  function applyFilters() {
+    var parsed = parseSearch(searchTerm);
+    var groups   = parsed.groups;
+    var required = parsed.required;
+    var excluded = parsed.excluded;
+
+    var hasQuery = groups.length > 0 || required.length > 0 || excluded.length > 0;
+
+    if (!hasQuery) {
+      filtered = allData.filter(function (d) {
+        return currentCategory === '__all__' || d.category === currentCategory;
+      });
+      renderTable();
+      renderPagination();
+      return;
+    }
+
+    // If only +/- modifiers and no comma groups, treat required as a single group
+    var effectiveGroups = groups.length > 0 ? groups : (required.length > 0 ? [[]] : []);
+
+    var scored = [];
+    allData.forEach(function (d) {
+      if (currentCategory !== '__all__' && d.category !== currentCategory) return;
+
+      var name  = d.name.toLowerCase();
+      var id    = String(d.id);
+      var trans = getTranslation(d).toLowerCase();
+
+      // Apply global exclusions first
+      for (var ei = 0; ei < excluded.length; ei++) {
+        var ex = excluded[ei];
+        if (name.indexOf(ex) !== -1 || id.indexOf(ex) !== -1 || trans.indexOf(ex) !== -1) return;
+      }
+
+      // Must match at least one group (group terms + required)
+      var bestScore = -1;
+      for (var gi = 0; gi < effectiveGroups.length; gi++) {
+        var groupTerms = effectiveGroups[gi].concat(required);
+        if (groupTerms.length === 0) { bestScore = Math.max(bestScore, 0); continue; }
+        var s = scoreItem(d, groupTerms);
+        if (s > bestScore) bestScore = s;
+      }
+
+      if (bestScore >= 0) scored.push({ d: d, score: bestScore });
+    });
+
+    scored.sort(function (a, b) { return b.score - a.score; });
+    filtered = scored.map(function (s) { return s.d; });
+
     renderTable();
     renderPagination();
   }
