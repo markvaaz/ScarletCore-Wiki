@@ -207,7 +207,6 @@ Browse, search and filter all available game prefabs. Use the **category sidebar
 
 .prefab-row > div {
   padding: 14px 20px;
-  overflow: hidden;
 }
 
 .prefab-col-name {
@@ -216,6 +215,7 @@ Browse, search and filter all available game prefabs. Use the **category sidebar
   font-weight: 700;
   word-break: break-word;
   overflow-wrap: break-word;
+  overflow: hidden;
 }
 
 .prefab-col-id {
@@ -224,6 +224,8 @@ Browse, search and filter all available game prefabs. Use the **category sidebar
   color: #c23030;
   white-space: nowrap;
   overflow: visible;
+  position: relative;
+  z-index: 10;
 }
 
 .prefab-col-id span {
