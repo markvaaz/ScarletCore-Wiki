@@ -544,17 +544,24 @@ Browse, search and filter all available game prefabs. Use the **category sidebar
     var globalRequired = [];
     var globalExcluded = [];
 
+    function isNegativeNumber(tok) {
+      return tok[0] === '-' && tok.length > 1 && /^\d+$/.test(tok.slice(1));
+    }
+
     // Collect all +/- tokens from the entire input
     raw.split(/\s+/).forEach(function (tok) {
       if (tok.length < 2) return;
       if (tok[0] === '+') globalRequired.push(tok.slice(1).toLowerCase());
-      else if (tok[0] === '-') globalExcluded.push(tok.slice(1).toLowerCase());
+      else if (tok[0] === '-' && !isNegativeNumber(tok)) globalExcluded.push(tok.slice(1).toLowerCase());
     });
 
-    // Split by comma into groups; strip +/- tokens from each group's regular terms
+    // Split by comma into groups; strip +/- modifier tokens but keep negative numbers
     var groups = raw.split(',').map(function (g) {
       return g.trim().split(/\s+/).filter(function (t) {
-        return t && t[0] !== '+' && t[0] !== '-';
+        if (!t) return false;
+        if (t[0] === '+') return false;
+        if (t[0] === '-' && !isNegativeNumber(t)) return false;
+        return true;
       }).map(function (t) { return t.toLowerCase(); });
     }).filter(function (g) { return g.length > 0; });
 
