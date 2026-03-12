@@ -351,7 +351,7 @@ Browse, search and filter all available game prefabs. Use the **category sidebar
 
   <section id="prefabs-content">
     <div id="prefabs-controls">
-      <input id="prefabs-search" type="text" placeholder="Search… e.g. weapon, chest +t06 -broken" autocomplete="off" />
+      <input id="prefabs-search" type="text" placeholder='Search… e.g. "Sword", weapon +t06 -broken' autocomplete="off" />
       <select id="prefabs-lang"><option>Loading…</option></select>
     </div>
     <div id="prefabs-grid">
@@ -447,7 +447,8 @@ Browse, search and filter all available game prefabs. Use the **category sidebar
         name: name,
         id: id,
         guid: guidMap[String(id)] || null,
-        category: getCategory(name)
+        category: getCategory(name),
+        words: splitCamelUnderscore(name)
       };
     });
 
@@ -505,64 +506,133 @@ Browse, search and filter all available game prefabs. Use the **category sidebar
   }
 
   // ──────────────────────────────────────────────
+  // CamelCase + underscore word splitter
+  // ──────────────────────────────────────────────
+  function splitCamelUnderscore(str) {
+    var words = [];
+    str.split('_').forEach(function (part) {
+      if (!part) return;
+      // Insert space before sequences like: ABCDef → ABC Def  and  camelCase → camel Case
+      part.replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+          .replace(/([a-z\d])([A-Z])/g, '$1 $2')
+          .split(' ')
+          .forEach(function (w) { if (w) words.push(w.toLowerCase()); });
+    });
+    return words;
+  }
+
+  // ──────────────────────────────────────────────
   // Filter + rank + render
   // ──────────────────────────────────────────────
+  // Each term is { val: string, exact: boolean }
   function scoreItem(d, terms) {
     var name  = d.name.toLowerCase();
+    var words = d.words;          // pre-computed camelCase+underscore segments
     var id    = String(d.id);
     var trans = getTranslation(d).toLowerCase();
     var total = 0;
 
     for (var i = 0; i < terms.length; i++) {
-      var t = terms[i];
-      var s = 0;
+      var term    = terms[i];
+      var t       = term.val;
+      var isExact = term.exact;
+      var s       = 0;
       var matched = false;
 
-      // Name: exact > starts-with > word-boundary > contains
-      if (name === t)                   { s += 100; matched = true; }
-      else if (name.indexOf(t) === 0)   { s +=  70; matched = true; }
-      else if (name.indexOf('_' + t) !== -1) { s += 55; matched = true; }
-      else if (name.indexOf(t) !== -1)  { s +=  40; matched = true; }
+      if (isExact) {
+        // Exact mode: term must be a complete camelCase word / id / translation word
+        if (words.indexOf(t) !== -1) { s += 100; matched = true; }
+        if (id === t) { s += 90; matched = true; }
+        var re = new RegExp('(?:^|[\\s\\-])' + t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?=[\\s\\-]|$)');
+        if (re.test(trans)) { s += 80; matched = true; }
+      } else {
+        // Fuzzy mode — name matching is camelCase-word-aware (no cross-boundary substring)
+        if (name === t) {
+          s += 100; matched = true;
+        } else if (name.indexOf(t) === 0) {
+          s += 70; matched = true;
+        } else {
+          // Check within individual camelCase words only
+          var best = 0;
+          for (var wi = 0; wi < words.length; wi++) {
+            var w = words[wi];
+            if (w === t)                { best = Math.max(best, 65); }
+            else if (w.indexOf(t) === 0) { best = Math.max(best, 55); }
+            else if (w.indexOf(t) !== -1) { best = Math.max(best, 40); }
+          }
+          if (best > 0) { s += best; matched = true; }
+        }
 
-      // ID: exact > contains
-      if (id === t)                     { s +=  90; matched = true; }
-      else if (id.indexOf(t) !== -1)    { s +=  30; matched = true; }
+        // ID: exact > contains
+        if (id === t)                  { s +=  90; matched = true; }
+        else if (id.indexOf(t) !== -1) { s +=  30; matched = true; }
 
-      // Translation: exact > starts-with > contains
-      if (trans === t)                  { s +=  80; matched = true; }
-      else if (trans.indexOf(t) === 0)  { s +=  50; matched = true; }
-      else if (trans.indexOf(t) !== -1) { s +=  20; matched = true; }
+        // Translation: exact > starts-with > contains
+        if (trans === t)                  { s +=  80; matched = true; }
+        else if (trans.indexOf(t) === 0)  { s +=  50; matched = true; }
+        else if (trans.indexOf(t) !== -1) { s +=  20; matched = true; }
+      }
 
-      if (!matched) return -1;  // term not found at all → exclude item
+      if (!matched) return -1;  // term not found → exclude item
       total += s;
     }
     return total;
   }
 
-  // Parse "weapon, chest +item +t06 -broken" into groups/required/excluded
+  // Parse search string into groups/required/excluded.
+  // Supports: "exact", +required, -excluded, comma groups, negative IDs.
   function parseSearch(raw) {
     var globalRequired = [];
     var globalExcluded = [];
 
-    function isNegativeNumber(tok) {
-      return tok[0] === '-' && tok.length > 1 && /^\d+$/.test(tok.slice(1));
+    function isNegativeNumber(s) {
+      return /^-\d+$/.test(s);
+    }
+    function makeTerm(val, exact) {
+      return { val: val.toLowerCase(), exact: !!exact };
     }
 
-    // Collect all +/- tokens from the entire input
-    raw.split(/\s+/).forEach(function (tok) {
-      if (tok.length < 2) return;
-      if (tok[0] === '+') globalRequired.push(tok.slice(1).toLowerCase());
-      else if (tok[0] === '-' && !isNegativeNumber(tok)) globalExcluded.push(tok.slice(1).toLowerCase());
+    // Process one comma-group segment: returns { plainTerms, required, excluded }
+    function processSegment(seg) {
+      var plainTerms = [];
+      var req        = [];
+      var excl       = [];
+
+      // Extract quoted tokens (with optional +/- prefix) first
+      var remaining = seg.replace(/([+\-]?)"([^"]+)"/g, function (_, prefix, val) {
+        if (prefix === '+')      req.push(makeTerm(val, true));
+        else if (prefix === '-') excl.push(val.toLowerCase());
+        else                     plainTerms.push(makeTerm(val, true));
+        return '';
+      });
+
+      // Process remaining plain tokens
+      remaining.split(/\s+/).forEach(function (tok) {
+        if (!tok || tok === '+' || tok === '-') return;
+        if (tok[0] === '+' && tok.length > 1) {
+          req.push(makeTerm(tok.slice(1), false));
+        } else if (tok[0] === '-' && !isNegativeNumber(tok) && tok.length > 1) {
+          excl.push(tok.slice(1).toLowerCase());
+        } else if (tok) {
+          plainTerms.push(makeTerm(tok, false));
+        }
+      });
+
+      return { plainTerms: plainTerms, required: req, excluded: excl };
+    }
+
+    var commaGroups = raw.split(',');
+
+    // +/- are global across all comma groups
+    commaGroups.forEach(function (seg) {
+      var res = processSegment(seg);
+      res.required.forEach(function (t) { globalRequired.push(t); });
+      res.excluded.forEach(function (e) { globalExcluded.push(e); });
     });
 
-    // Split by comma into groups; strip +/- modifier tokens but keep negative numbers
-    var groups = raw.split(',').map(function (g) {
-      return g.trim().split(/\s+/).filter(function (t) {
-        if (!t) return false;
-        if (t[0] === '+') return false;
-        if (t[0] === '-' && !isNegativeNumber(t)) return false;
-        return true;
-      }).map(function (t) { return t.toLowerCase(); });
+    // Each comma group's plain terms form one search group
+    var groups = commaGroups.map(function (seg) {
+      return processSegment(seg).plainTerms;
     }).filter(function (g) { return g.length > 0; });
 
     return { groups: groups, required: globalRequired, excluded: globalExcluded };
@@ -596,10 +666,11 @@ Browse, search and filter all available game prefabs. Use the **category sidebar
       var id    = String(d.id);
       var trans = getTranslation(d).toLowerCase();
 
-      // Apply global exclusions first
+      // Apply global exclusions first (camelCase-word-aware for name)
       for (var ei = 0; ei < excluded.length; ei++) {
         var ex = excluded[ei];
-        if (name.indexOf(ex) !== -1 || id.indexOf(ex) !== -1 || trans.indexOf(ex) !== -1) return;
+        var nameExcluded = d.words.some(function (w) { return w.indexOf(ex) !== -1; });
+        if (nameExcluded || id.indexOf(ex) !== -1 || trans.indexOf(ex) !== -1) return;
       }
 
       // Must match at least one group (group terms + required)
