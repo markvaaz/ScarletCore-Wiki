@@ -104,7 +104,7 @@ BoxShadow = new BoxShadow(UIColor.RGBA(0, 0, 0, 0.5f), offsetX: 0, offsetY: 4, b
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `Draggable` | `bool` | `true` | Whether the player can drag the window |
-| `Transparent` | `bool` | `false` | Render without a background panel |
+| `Transparent` | `bool` | `false` | Makes the window click-through — mouse clicks pass through it and are not captured by the window |
 | `HideOnMenuOpen` | `bool` | `true` | Hide when any in-game menu (inventory, map, etc.) opens |
 | `NativeParent` | `string` | none | Attach to an existing game UI element path |
 
