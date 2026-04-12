@@ -11,7 +11,7 @@ Before you begin, make sure you have installed:
 - **.NET 6.0 SDK or later** — [Download here](https://dotnet.microsoft.com/download/dotnet/6.0)
 - **V Rising Dedicated Server** — Required for testing your mods
 - **Code Editor** — We recommend [Visual Studio 2022](https://visualstudio.microsoft.com/) or [Visual Studio Code](https://code.visualstudio.com/)
-- **BepInEx 6.0+** — Modding framework for Unity (already included in dedicated server)
+- **BepInEx 6.0+** — Modding framework for Unity ([installation guide](GettingStarted/BepInEx.md))
 
 ---
 
