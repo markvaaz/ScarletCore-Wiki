@@ -9,6 +9,7 @@
 
 * **Getting Started**
   * [Overview](GettingStarted/)
+  * [Installing BepInEx](GettingStarted/BepInEx.md)
   * [Quick Start](GettingStarted/QuickStart.md)
   * [Your First Mod](GettingStarted/FirstMod.md)
 

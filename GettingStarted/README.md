@@ -32,6 +32,9 @@ Before you begin, make sure you have installed:
 
 We'll use **ScarletTemplate** to create your mod quickly with all dependencies configured automatically.
 
+### [Installing BepInEx](GettingStarted/BepInEx.md)
+Install the modding framework required to run any V Rising server mod.
+
 ### [Quick Start with ScarletTemplate](GettingStarted/QuickStart.md)
 Create a new mod project in minutes with the .NET template system.
 
