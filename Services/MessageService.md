@@ -54,7 +54,7 @@ The `MessageService` is a static utility class that provides methods for:
 - [Localization Methods](#localization-methods)
   - [SendLocalized](#sendlocalized)
   - [SendAllLocalized](#sendalllocalized)
-- [Conditional Messaging](#conditional-messaging)
+  - [SendAllLocalizedRaw](#sendalllocalized-raw)- [Conditional Messaging](#conditional-messaging)
   - [SendConditional](#sendconditional-user-simple)
 - [Complete Example](#complete-example-comprehensive-messaging-system)
 - [Available Colors](#available-colors-richtextformatter)
@@ -722,6 +722,26 @@ Sends a localized message to all players using each player's preferred language.
 // Each player receives message in their language
 MessageService.SendAllLocalized("server.restart.warning", 10);
 MessageService.SendAllLocalized("event.started", "Blood Moon");
+```
+
+---
+
+#### SendAllLocalizedRaw
+```csharp
+public static void SendAllLocalizedRaw(string localizationKey, params object[] parameters)
+```
+
+Sends a raw (unformatted) localized message individually to all players using each player's preferred language.
+
+**Parameters:**
+- `localizationKey` (string): Localization key for translation
+- `parameters` (params object[]): Parameters for string formatting
+
+**Example:**
+```csharp
+// Send plain localized notification to all players (no color/formatting applied)
+MessageService.SendAllLocalizedRaw("server.status.ok");
+MessageService.SendAllLocalizedRaw("boss.spawn.warning", bossName);
 ```
 
 ---

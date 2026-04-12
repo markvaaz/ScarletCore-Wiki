@@ -1,6 +1,6 @@
-# RevealMapService
+# MapService
 
-The `RevealMapService` provides utility methods for revealing and hiding the in-game map for players. It supports full map reveal, custom region control (radius and rectangle), and advanced byte array pattern-based reveals.
+The `MapService` provides utility methods for revealing and hiding the in-game map for players, as well as querying world regions. It supports full map reveal, custom region control (radius and rectangle), advanced byte array pattern-based reveals, and region detection.
 
 ## Namespace
 ```csharp
@@ -9,12 +9,13 @@ using ScarletCore.Services;
 
 ## Overview
 
-The `RevealMapService` is a static utility class that provides:
+The `MapService` is a static utility class that provides:
 - Full map reveal/hide functionality
 - Circular area reveals (radius-based)
 - Rectangular area reveals
 - Custom map pattern reveals using byte arrays
 - Precise pixel-level map control
+- World region detection and display name lookup
 
 ## Table of Contents
 
@@ -26,6 +27,10 @@ The `RevealMapService` is a static utility class that provides:
   - [RevealMapRectangle](#revealmaprectangle)
 - [Advanced Operations](#advanced-operations)
   - [RevealMapFromByteArray](#revealmapfrombytearray)
+- [World Regions](#world-regions)
+  - [GetRegion](#getregion)
+  - [GetRegionTypeByName](#getregiontypebyname)
+  - [GetRegionDisplayName](#getregiondisplayname)
 - [Technical Details](#technical-details)
 - [Complete Examples](#complete-examples)
 - [Best Practices](#best-practices)
@@ -62,7 +67,7 @@ Reveals the entire map for a player.
 **Example:**
 ```csharp
 if (PlayerService.TryGetByName("DragonSlayer", out var player)) {
-    RevealMapService.RevealFullMap(player);
+    MapService.RevealFullMap(player);
     MessageService.SendSuccess(player, "Full map revealed!");
 }
 ```
@@ -86,7 +91,7 @@ Hides the entire map for a player, returning it to unexplored state.
 
 **Example:**
 ```csharp
-RevealMapService.HideFullMap(player);
+MapService.HideFullMap(player);
 MessageService.SendWarning(player, "Map has been hidden!");
 ```
 
@@ -117,11 +122,11 @@ using Unity.Mathematics;
 
 // Reveal 500 units around player's current position
 var playerPos = player.Position;
-RevealMapService.RevealMapRadius(player, playerPos, 500f);
+MapService.RevealMapRadius(player, playerPos, 500f);
 
 // Reveal area around a specific location
 var castlePos = new float3(100f, 0f, 200f);
-RevealMapService.RevealMapRadius(player, castlePos, 1000f);
+MapService.RevealMapRadius(player, castlePos, 1000f);
 
 MessageService.SendInfo(player, "Map area revealed!");
 ```
@@ -153,11 +158,11 @@ using Unity.Mathematics;
 
 // Reveal a rectangular area
 var centerPos = new float3(0f, 0f, 0f);
-RevealMapService.RevealMapRectangle(player, centerPos, 1000f, 500f);
+MapService.RevealMapRectangle(player, centerPos, 1000f, 500f);
 
 // Reveal an area along a path
 var pathStart = new float3(-500f, 0f, 0f);
-RevealMapService.RevealMapRectangle(player, pathStart, 2000f, 200f);
+MapService.RevealMapRectangle(player, pathStart, 2000f, 200f);
 
 MessageService.SendInfo(player, "Rectangular area revealed!");
 ```
@@ -196,12 +201,12 @@ for (int i = 0; i < 2048; i++) {
     customPattern[i] = 0xFF; // Fully revealed
 }
 
-RevealMapService.RevealMapFromByteArray(player, customPattern);
+MapService.RevealMapFromByteArray(player, customPattern);
 
 // Load pattern from file
 byte[] savedPattern = System.IO.File.ReadAllBytes("custom_map.bin");
 if (savedPattern.Length == 8192) {
-    RevealMapService.RevealMapFromByteArray(player, savedPattern);
+    MapService.RevealMapFromByteArray(player, savedPattern);
 }
 ```
 
@@ -221,6 +226,91 @@ if (savedPattern.Length == 8192) {
 - Additive operation (uses bitwise OR)
 - Preserves existing revealed areas
 - Useful for complex patterns, saved states, or procedural generation
+
+---
+
+## World Regions
+
+Methods for detecting and querying named world regions.
+
+### GetRegion
+```csharp
+public static WorldRegionType GetRegion(float3 pos)
+```
+
+Returns the `WorldRegionType` of the region that contains the specified world position, using polygon ray-casting.
+
+**Parameters:**
+- `pos` (float3): A world position to query
+
+**Returns:**
+- `WorldRegionType`: The region containing this position, or `WorldRegionType.None` if outside all regions
+
+**Example:**
+```csharp
+var region = MapService.GetRegion(player.Position);
+Log.Message($"Player is in region: {region}");
+```
+
+---
+
+### GetRegionTypeByName
+```csharp
+public static WorldRegionType GetRegionTypeByName(string name)
+```
+
+Looks up a `WorldRegionType` by its lowercase string key.
+
+**Parameters:**
+- `name` (string): Case-insensitive region name key
+
+**Returns:**
+- `WorldRegionType`: The corresponding `WorldRegionType`, or `WorldRegionType.None` if not found
+
+**Valid names:**
+
+| Key | Region |
+|-----|--------|
+| `"farbane"` | Farbane Woods |
+| `"dunley"` | Dunley Farmlands |
+| `"forest"` | Cursed Forest |
+| `"mountains"` | Hallowed Mountains |
+| `"silverlight"` | Silverlight Hills |
+| `"gloomrot"` | Gloomrot (combined) |
+| `"gloomrotsouth"` | Gloomrot South |
+| `"gloomrotnorth"` | Gloomrot North |
+| `"mortium"` | Mortium |
+| `"oakveil"` | Oakveil Woodlands |
+
+**Example:**
+```csharp
+var regionType = MapService.GetRegionTypeByName("farbane");
+var displayName = MapService.GetRegionDisplayName(regionType, Language.English);
+// displayName = "Farbane Woods"
+```
+
+---
+
+### GetRegionDisplayName
+```csharp
+public static string GetRegionDisplayName(WorldRegionType regionType, Language language)
+```
+
+Returns the localized display name of a region in the specified language.
+
+**Parameters:**
+- `regionType` (WorldRegionType): The region to get the name for
+- `language` (Language): The `Language` enum value for the desired locale
+
+**Returns:**
+- `string`: The localized region display name
+
+**Example:**
+```csharp
+var region = MapService.GetRegion(player.Position);
+var regionName = MapService.GetRegionDisplayName(region, player.Language);
+MessageService.Send(player, $"You are in {regionName}");
+```
 
 ---
 
@@ -293,27 +383,27 @@ using Unity.Mathematics;
 public class MapRevealCommands {
     [Command("revealmap", description: "Reveal the entire map", adminOnly: true)]
     public static void RevealMapCommand(CommandContext ctx) {
-        RevealMapService.RevealFullMap(ctx.Player);
+        MapService.RevealFullMap(ctx.Player);
         MessageService.SendSuccess(ctx.Player, "Full map revealed!");
     }
     
     [Command("hidemap", description: "Hide the entire map", adminOnly: true)]
     public static void HideMapCommand(CommandContext ctx) {
-        RevealMapService.HideFullMap(ctx.Player);
+        MapService.HideFullMap(ctx.Player);
         MessageService.SendWarning(ctx.Player, "Map has been hidden!");
     }
     
     [Command("revealradius", description: "Reveal map in a radius", adminOnly: true)]
     public static void RevealRadiusCommand(CommandContext ctx, float radius) {
         var pos = ctx.Player.Position;
-        RevealMapService.RevealMapRadius(ctx.Player, pos, radius);
+        MapService.RevealMapRadius(ctx.Player, pos, radius);
         MessageService.SendSuccess(ctx.Player, $"Revealed {radius} units around you!");
     }
     
     [Command("revealat", description: "Reveal map at coordinates", adminOnly: true)]
     public static void RevealAtCommand(CommandContext ctx, float x, float z, float radius) {
         var pos = new float3(x, 0f, z);
-        RevealMapService.RevealMapRadius(ctx.Player, pos, radius);
+        MapService.RevealMapRadius(ctx.Player, pos, radius);
         MessageService.SendSuccess(ctx.Player, $"Revealed area at ({x}, {z})!");
     }
 }
@@ -338,13 +428,13 @@ public class ProgressiveMapReveal {
             
             // Reveal map every 100 units traveled
             if (distance > 100f) {
-                RevealMapService.RevealMapRadius(player, currentPos, 150f);
+                MapService.RevealMapRadius(player, currentPos, 150f);
                 lastPositions[player.PlatformId] = currentPos;
             }
         } else {
             // First position
             lastPositions[player.PlatformId] = currentPos;
-            RevealMapService.RevealMapRadius(player, currentPos, 150f);
+            MapService.RevealMapRadius(player, currentPos, 150f);
         }
     }
     
@@ -373,7 +463,7 @@ public class ZoneMapReveal {
     
     public static void RevealZone(PlayerData player, string zoneName) {
         if (zones.TryGetValue(zoneName, out var zone)) {
-            RevealMapService.RevealMapRadius(player, zone.Center, zone.Radius);
+            MapService.RevealMapRadius(player, zone.Center, zone.Radius);
             MessageService.SendSuccess(player, $"Revealed {zoneName}!");
         } else {
             MessageService.SendError(player, $"Zone '{zoneName}' not found!");
@@ -382,7 +472,7 @@ public class ZoneMapReveal {
     
     public static void RevealAllZones(PlayerData player) {
         foreach (var zone in zones) {
-            RevealMapService.RevealMapRadius(player, zone.Value.Center, zone.Value.Radius);
+            MapService.RevealMapRadius(player, zone.Value.Center, zone.Value.Radius);
         }
         MessageService.SendSuccess(player, "All zones revealed!");
     }
@@ -419,7 +509,7 @@ public class PathRevealSystem {
                 var pos = math.lerp(start, end, t);
                 
                 // Reveal small circles along the path
-                RevealMapService.RevealMapRadius(player, pos, width / 2);
+                MapService.RevealMapRadius(player, pos, width / 2);
             }
         }
         
@@ -433,7 +523,7 @@ public class PathRevealSystem {
         var length = math.length(direction);
         
         // Reveal as rectangle
-        RevealMapService.RevealMapRectangle(player, center, length, 100f);
+        MapService.RevealMapRectangle(player, center, length, 100f);
         MessageService.SendSuccess(player, "Road revealed!");
     }
 }
@@ -502,7 +592,7 @@ public class MapPatternGenerator {
     
     public static void ApplyCustomPattern(PlayerData player, byte[] pattern) {
         if (pattern.Length == 8192) {
-            RevealMapService.RevealMapFromByteArray(player, pattern);
+            MapService.RevealMapFromByteArray(player, pattern);
             MessageService.SendSuccess(player, "Custom map pattern applied!");
         } else {
             MessageService.SendError(player, "Invalid pattern size!");
@@ -525,14 +615,14 @@ public class AchievementMapReveals {
                 break;
             case "Solarus":
                 // Reveal full map as final reward
-                RevealMapService.RevealFullMap(player);
+                MapService.RevealFullMap(player);
                 MessageService.SendSuccess(player, "Full map revealed for defeating Solarus!");
                 return;
         }
     }
     
     private static void RevealZoneAroundBoss(PlayerData player, float3 position, float radius, string zoneName) {
-        RevealMapService.RevealMapRadius(player, position, radius);
+        MapService.RevealMapRadius(player, position, radius);
         MessageService.SendSuccess(player, $"Map area revealed: {zoneName}!");
     }
 }
@@ -547,14 +637,14 @@ public class AchievementMapReveals {
 ```csharp
 // Good - Use full reveal for admin commands
 if (player.IsAdmin) {
-    RevealMapService.RevealFullMap(player);
+    MapService.RevealFullMap(player);
 }
 
 // Good - Use radius for exploration
-RevealMapService.RevealMapRadius(player, player.Position, 200f);
+MapService.RevealMapRadius(player, player.Position, 200f);
 
 // Good - Use rectangle for roads/paths
-RevealMapService.RevealMapRectangle(player, pathCenter, 1000f, 100f);
+MapService.RevealMapRectangle(player, pathCenter, 1000f, 100f);
 ```
 
 ### 2. Validate Positions
@@ -567,7 +657,7 @@ bool IsValidPosition(float3 pos) {
 }
 
 if (IsValidPosition(targetPos)) {
-    RevealMapService.RevealMapRadius(player, targetPos, radius);
+    MapService.RevealMapRadius(player, targetPos, radius);
 }
 ```
 
@@ -579,7 +669,7 @@ public static void RevealProgressively(PlayerData player, float3 center, float m
     float currentRadius = 100f;
     
     ActionScheduler.RunRepeating(() => {
-        RevealMapService.RevealMapRadius(player, center, currentRadius);
+        MapService.RevealMapRadius(player, center, currentRadius);
         currentRadius += 100f;
         
         if (currentRadius > maxRadius) {
@@ -600,7 +690,7 @@ public static bool ApplySafePattern(PlayerData player, byte[] pattern) {
         return false;
     }
     
-    RevealMapService.RevealMapFromByteArray(player, pattern);
+    MapService.RevealMapFromByteArray(player, pattern);
     return true;
 }
 ```
@@ -611,10 +701,10 @@ public static bool ApplySafePattern(PlayerData player, byte[] pattern) {
 // Good - Combine reveals for complex shapes
 public static void RevealCrossPattern(PlayerData player, float3 center, float size) {
     // Horizontal bar
-    RevealMapService.RevealMapRectangle(player, center, size, size / 10);
+    MapService.RevealMapRectangle(player, center, size, size / 10);
     
     // Vertical bar
-    RevealMapService.RevealMapRectangle(player, center, size / 10, size);
+    MapService.RevealMapRectangle(player, center, size / 10, size);
     
     MessageService.SendInfo(player, "Cross pattern revealed!");
 }
@@ -626,7 +716,7 @@ public static void RevealCrossPattern(PlayerData player, float3 center, float si
 // Good - Batch reveals when possible
 public static void RevealMultipleAreas(PlayerData player, List<(float3 pos, float radius)> areas) {
     foreach (var area in areas) {
-        RevealMapService.RevealMapRadius(player, area.pos, area.radius);
+        MapService.RevealMapRadius(player, area.pos, area.radius);
     }
     // Only one map update sent at the end
 }

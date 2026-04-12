@@ -30,6 +30,7 @@ The `PlayerService` is a static utility class that provides:
   - [TryGetByName](#trygetbyname)
   - [GetAdmins](#getadmins)
   - [GetAllConnected](#getallconnected)
+  - [GetPlayersInRange](#getplayersinrange)
 - [Player Name Management](#player-name-management)
   - [RenamePlayer](#renameplayer)
   - [ExtractCleanName](#extractcleanname)
@@ -252,6 +253,35 @@ MessageService.SendAll($"Players online: {onlinePlayers.Count}");
 foreach (var player in onlinePlayers) {
     Log.Message($"Online: {player.Name} at position {player.Position}");
 }
+```
+
+---
+
+#### GetPlayersInRange
+```csharp
+public static List<PlayerData> GetPlayersInRange(float2 position, float range)
+public static List<PlayerData> GetPlayersInRange(float3 position, float range)
+```
+
+Gets all players within a given radius of a world position.
+
+**Parameters:**
+- `position` (float2 or float3): The center position in world space
+- `range` (float): The search radius in world units
+
+**Returns:**
+- `List<PlayerData>`: List of players within range
+
+**Example:**
+```csharp
+// Get players near a specific world position
+var nearbyPlayers = PlayerService.GetPlayersInRange(new float3(100f, 0f, 100f), 20f);
+foreach (var player in nearbyPlayers) {
+    Log.Message($"{player.Name} is within range!");
+}
+
+// Using float2 for XZ-plane search
+var playersNearby = PlayerService.GetPlayersInRange(new float2(100f, 100f), 15f);
 ```
 
 ---

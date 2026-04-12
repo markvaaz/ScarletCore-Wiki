@@ -40,7 +40,7 @@ The `SpawnerService` is a static utility class that provides:
 
 ### Spawn
 ```csharp
-public static bool Spawn(PrefabGUID prefabGUID, float3 position, float minRange = 0f, float maxRange = 0f, float lifeTime = 0f, int count = 1)
+public static bool Spawn(PrefabGUID prefabGUID, float3 position, float minRange = 0f, float maxRange = 0f, float lifeTime = 0f, int count = 1, Action<Entity> postSpawnAction = null)
 ```
 
 Spawns entities at a specific position with validation and error handling.
@@ -52,6 +52,7 @@ Spawns entities at a specific position with validation and error handling.
 - `maxRange` (float, optional): Maximum spawn offset from position (default: 0, must be >= minRange)
 - `lifeTime` (float, optional): How long the entities should live in seconds (0 = permanent, default: 0)
 - `count` (int, optional): Number of entities to spawn (default: 1, must be > 0)
+- `postSpawnAction` (Action\<Entity\>, optional): Action to execute after spawn completes (receives spawned entity)
 
 **Returns:**
 - `bool`: True if spawn was successful, false otherwise
@@ -68,6 +69,12 @@ SpawnerService.Spawn(bearGUID, new float3(100, 0, 100));
 // Spawn 5 wolves in a 10-unit radius for 60 seconds
 var wolfGUID = new PrefabGUID(-1342764880);
 SpawnerService.Spawn(wolfGUID, playerPos, minRange: 5f, maxRange: 10f, lifeTime: 60f, count: 5);
+
+// Spawn a boss and modify it after spawning
+var bossGUID = new PrefabGUID(-1905691330);
+SpawnerService.Spawn(bossGUID, spawnPos, lifeTime: 300f, postSpawnAction: (entity) => {
+    MessageService.SendAll("A powerful boss has appeared!");
+});
 
 // Spawn 3 enemies at exact position for 30 seconds
 var enemyGUID = new PrefabGUID(1234567890);
@@ -145,6 +152,9 @@ SpawnerService.SpawnInRadius(ironGUID, mineLocation, 15f, 0f, 5);
 ---
 
 ### SpawnWithPostAction
+
+> **[Obsolete]** Use `Spawn` with the `postSpawnAction` parameter instead.
+
 ```csharp
 public static bool SpawnWithPostAction(PrefabGUID prefabGUID, float3 position, float lifeTime, Action<Entity> postSpawnAction)
 ```
@@ -967,10 +977,10 @@ BuffService.ApplyBuff(enemy, buffGUID); // Simpler than post-action
 
 | Method | Returns Entity | Immediate | Use Case |
 |--------|---------------|-----------|----------|
-| `Spawn` | ❌ (bool) | ❌ | Fire-and-forget spawning |
+| `Spawn` | ❌ (bool) | ❌ | Fire-and-forget spawning, with optional post-spawn action |
 | `ImmediateSpawn` | ✅ | ✅ | Need entity reference |
 | `SpawnCopy` | ✅ | ✅ | Complex prefabs/structures |
-| `SpawnWithPostAction` | ❌ (bool) | ❌ | Deferred modifications |
+| `SpawnWithPostAction` | ❌ (bool) | ❌ | **Obsolete** — use `Spawn` with `postSpawnAction` instead |
 
 ### Position Randomization
 - Random position calculated as: `position + random(-maxRange, maxRange)`
@@ -999,5 +1009,5 @@ BuffService.ApplyBuff(enemy, buffGUID); // Simpler than post-action
 - All spawn methods validate parameters before execution
 - Returns false/Entity.Null on validation failure
 - Position is randomized within specified range (except Y-axis)
-- Use `SpawnWithPostAction` for modifications that require entity to be fully initialized
+- Use the `postSpawnAction` parameter on `Spawn` for modifications that require entity to be fully initialized
 - Entity.Null is used as default spawner for all spawn operations

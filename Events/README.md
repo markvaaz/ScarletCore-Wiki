@@ -8,6 +8,7 @@ EventManager supports multiple event categories:
 - **PrefixEvents** - Triggered before core game logic
 - **PostfixEvents** - Triggered after core game logic
 - **PlayerEvents** - Player-related events (join, leave, character creation, etc.)
+- **RoleEvents** - Role assignment lifecycle events
 - **ServerEvents** - Server-wide events (initialization, save)
 - **CommandEvents** - Command execution lifecycle events (internal)
 - **Custom Events** - User-defined events with dynamic typing
@@ -115,6 +116,25 @@ EventManager.On(PlayerEvents.PlayerJoined, (playerData) => {
 - `PlayerBanned` - Player is banned
 - `CharacterCreated` - New character created
 - `CharacterRenamed` - Character renamed
+- `InterfaceAuth` - Player authenticated with ScarletInterface client mod
+
+### RoleEvents
+
+Role assignment lifecycle events.
+
+```csharp
+EventManager.On(RoleEvents.RoleAdded, (player, role) => {
+  Log.Message($"{player.Name} was given the '{role.Name}' role");
+});
+
+EventManager.On(RoleEvents.RoleRemoved, (player, role) => {
+  Log.Message($"{player.Name} lost the '{role.Name}' role");
+});
+```
+
+**Available RoleEvents:**
+- `RoleAdded` - A role was added to a player
+- `RoleRemoved` - A role was removed from a player
 
 ### ServerEvents
 

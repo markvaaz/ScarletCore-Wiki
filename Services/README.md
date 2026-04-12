@@ -82,8 +82,8 @@ Clan operations including member queries, invitations, role management, and clan
 
 ### Exploration
 
-#### [RevealMapService](RevealMapService.md)
-Control map visibility for players. Reveal entire map, specific chunks, or hide revealed areas. Manage exploration state and fog of war.
+#### [MapService](MapService.md)
+Control map visibility for players. Reveal entire map, specific chunks, or hide revealed areas. Manage exploration state, fog of war, and query world regions.
 
 ---
 

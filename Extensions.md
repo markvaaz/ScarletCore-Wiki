@@ -579,14 +579,34 @@ Log.Info($"Enemy level: {level}");
 
 ```csharp
 public static string LocalizedName(this PrefabGUID prefabGuid)
+public static string LocalizedName(this PrefabGUID prefabGuid, Language language)
 ```
 
-Gets the localized name for a PrefabGUID.
+Gets the localized name for a PrefabGUID. When a `Language` is provided, returns the name in that specific language.
 
 **Example:**
 ```csharp
 var name = itemPrefab.LocalizedName();
 MessageService.SendMessage(player, $"You obtained {name}");
+
+// With explicit language
+var frenchName = itemPrefab.LocalizedName(Language.French);
+```
+
+---
+
+#### GetName
+
+```csharp
+public static string GetName(this PrefabGUID prefabGuid)
+```
+
+Gets the raw prefab name from the `PrefabCollectionSystem` lookup map. Returns `"Unknown Prefab"` if the GUID is not found.
+
+**Example:**
+```csharp
+var rawName = entity.PrefabGuid.GetName();
+Log.Message($"Prefab raw name: {rawName}");
 ```
 
 ---

@@ -191,6 +191,49 @@ EventManager.On(PlayerEvents.CharacterRenamed, (player) => {
 });
 ```
 
+### InterfaceAuth
+
+**Signature:** `Action<PlayerData>`
+
+Triggered when a player authenticates with the ScarletInterface client mod.
+
+```csharp
+EventManager.On(PlayerEvents.InterfaceAuth, (player) => {
+  Log.Message($"{player.Name} authenticated with ScarletInterface");
+  // Now safe to send UI windows to this player
+});
+```
+
+## RoleEvents
+
+Role lifecycle events triggered when player roles change.
+
+**Signature:** `Action<PlayerData, Role>`
+
+| Event | Description |
+|-------|-------------|
+| `RoleAdded` | Triggered when a role is added to a player |
+| `RoleRemoved` | Triggered when a role is removed from a player |
+
+### Example Usage
+
+```csharp
+EventManager.On(RoleEvents.RoleAdded, (player, role) => {
+  Log.Message($"{player.Name} was given the '{role.Name}' role");
+  MessageService.Send(player, $"You have been assigned the ~{role.Name}~ role!");
+});
+
+EventManager.On(RoleEvents.RoleRemoved, (player, role) => {
+  Log.Message($"{player.Name} lost the '{role.Name}' role");
+  MessageService.Send(player, $"The ~{role.Name}~ role has been removed from you.");
+});
+
+// One-time subscription
+EventManager.Once(RoleEvents.RoleAdded, (player, role) => {
+  Log.Message($"First role assignment: {player.Name} → {role.Name}");
+});
+```
+
 ## ServerEvents
 
 Server-wide lifecycle events.

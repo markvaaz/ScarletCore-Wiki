@@ -27,7 +27,7 @@
   * [AbilityService](Services/AbilityService.md)
   * [InventoryService](Services/InventoryService.md)
   * [ClanService](Services/ClanService.md)
-  * [RevealMapService](Services/RevealMapService.md)
+  * [MapService](Services/MapService.md)
 
 * **Systems**
   * [Overview](Systems/)

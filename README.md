@@ -40,7 +40,7 @@ High-level service APIs for common modding tasks. Services are static classes th
 - **Combat & Stats** — BuffService, StatModifierService, AbilityService
 - **Inventory** — InventoryService
 - **Social** — ClanService
-- **Exploration** — RevealMapService
+- **Exploration** — MapService
 
 [Browse Services Documentation →](Services/)
 
