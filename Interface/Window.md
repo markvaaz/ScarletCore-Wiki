@@ -55,7 +55,8 @@ Border = new Border(UIColor.Hex("#555"), width: 1, radius: 8)
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `Padding` | `Spacing?` | none | Inner spacing between the border and children |
-| `Gap` | `float` | `0` | Gap in pixels between child rows |
+| `Direction` | `FlowDirection` | `Vertical` | Flow direction of children: `Vertical` (top-to-bottom) or `Horizontal` (left-to-right) |
+| `Gap` | `float` | `0` | Gap in pixels between child elements |
 | `Overflow` | `OverflowMode` | `Visible` | How overflowing content is handled |
 
 ```csharp

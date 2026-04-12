@@ -15,7 +15,6 @@ All visible content inside a Window is made up of elements. Every element inheri
 - [ProgressBar](#progressbar)
 - [Accordion](#accordion)
 - [AnimatedSheet](#animatedsheet)
-- [PortraitCamera](#portraitcamera)
 
 ---
 
@@ -73,6 +72,7 @@ new Row {
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
+| `Direction` | `FlowDirection` | `Horizontal` | Flow direction: `Horizontal` (left-to-right) or `Vertical` (top-to-bottom) |
 | `Gap` | `float` | `0` | Gap between children in pixels |
 | `JustifyContent` | `JustifyContent` | `Start` | Horizontal distribution of children |
 | `AlignItems` | `AlignItems` | `Start` | Vertical alignment of children |
@@ -396,35 +396,4 @@ new AnimatedSheet {
 
 **`AnimationLoopType` values:** `Loop`, `Bounce`
 
----
 
-## PortraitCamera
-
-Renders the local player's character in 3D inside the UI element.
-
-```csharp
-new PortraitCamera {
-  Width = 200, Height = 300,
-  FieldOfView = 50,
-  OrbitAngle = 15,
-  Distance = 1.2f,
-  BackgroundColor = UIColor.Hex("#111"),
-  BackgroundUrl = "https://example.com/portrait-bg.png"
-}
-```
-
-### Properties
-
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `FieldOfView` | `float` | `60` | Camera field of view in degrees |
-| `OrbitAngle` | `float` | `0` | Orbit angle in degrees around the anchor bone |
-| `Distance` | `float` | `1` | Distance multiplier from the anchor bone |
-| `AnchorBone` | `string` | `"Head_JNT"` | Bone the camera orbits around |
-| `BackgroundUrl` | `string` | — | URL of the texture rendered behind the character |
-| `BackgroundColor` | `UIColor?` | none | Solid tint on the background quad |
-| `BackgroundSize` | `float` | `1.6` | World-space size of the background quad (metres) |
-| `BackgroundOffsetX` | `float` | `0` | UV offset X for panning |
-| `BackgroundOffsetY` | `float` | `0` | UV offset Y for panning |
-| `BackgroundScaleX` | `float` | `1` | UV scale X for zooming |
-| `BackgroundScaleY` | `float` | `1` | UV scale Y for zooming |

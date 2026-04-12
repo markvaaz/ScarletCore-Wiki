@@ -18,6 +18,7 @@ This page covers all visual styling types used by Window and Element properties:
   - [UITextShadow](#uitextshadow)
   - [UITextOutline](#uitextoutline)
 - [UIIcons](#uiicons)
+- [NativeFonts](#nativefonts)
 
 ---
 
@@ -334,3 +335,55 @@ new Text { Content = $"Requires: 5x {UIIcons.Icon(-1234567890)} Iron Ingot" }
 ```
 
 The `guidHash` is the raw `int` value of the item's `PrefabGUID`. You can find these in the [Prefabs Browser](Data/Prefabs.md).
+
+---
+
+## NativeFonts
+
+Short-code aliases for the native V Rising TMP font assets. Use them as the `Font` property on any text element — the client resolves the short code to the full asset name automatically.
+
+```csharp
+new Text { Content = "Title", Font = NativeFonts.NocturneSDF, FontSize = 18 }
+new Text { Content = "Body",  Font = NativeFonts.Liberation }
+```
+
+### Available constants
+
+#### Nocturne Serif
+
+| Constant | Short code | Description |
+|----------|------------|-------------|
+| `NativeFonts.NocturneSDF` | `@ns` | Primary in-game font for most UI text |
+| `NativeFonts.NocturneDropShadow` | `@ns_ds` | DropShadow variant |
+| `NativeFonts.NocturneMainMenu` | `@ns_mm` | MainMenu variant |
+| `NativeFonts.NocturneSCT` | `@ns_sct` | Scrolling combat text variant |
+| `NativeFonts.NocturneStroke` | `@ns_st` | Stroke variant |
+| `NativeFonts.NocturneUnknown` | `@ns_uk` | Unknown/Tech Glow variant |
+
+#### Liberation Sans
+
+| Constant | Short code | Description |
+|----------|------------|-------------|
+| `NativeFonts.Liberation` | `@lib` | Liberation Sans SDF |
+| `NativeFonts.LiberationFallback` | `@lib_fb` | Liberation Sans SDF — Fallback variant |
+
+#### Noto Sans (multilingual)
+
+| Constant | Short code | Description |
+|----------|------------|-------------|
+| `NativeFonts.NotoSans` | `@noto` | Noto Sans Regular |
+| `NativeFonts.NotoSansBold` | `@noto_b` | Noto Sans Bold |
+| `NativeFonts.NotoArabic` | `@noto_ar` | Noto Sans Arabic Regular |
+| `NativeFonts.NotoArabicBold` | `@noto_arb` | Noto Sans Arabic Bold |
+| `NativeFonts.NotoJP` | `@noto_jp` | Noto Sans JP Regular |
+| `NativeFonts.NotoJPBold` | `@noto_jpb` | Noto Sans JP Bold |
+| `NativeFonts.NotoKR` | `@noto_kr` | Noto Sans KR Regular |
+| `NativeFonts.NotoKRBold` | `@noto_krb` | Noto Sans KR Bold |
+| `NativeFonts.NotoSC` | `@noto_sc` | Noto Sans SC (Simplified Chinese) Regular |
+| `NativeFonts.NotoSCBold` | `@noto_scb` | Noto Sans SC Bold |
+| `NativeFonts.NotoTC` | `@noto_tc` | Noto Sans TC (Traditional Chinese) Regular |
+| `NativeFonts.NotoTCBold` | `@noto_tcb` | Noto Sans TC Bold |
+| `NativeFonts.NotoThai` | `@noto_th` | Noto Sans Thai Regular |
+| `NativeFonts.NotoThaiBold` | `@noto_thb` | Noto Sans Thai Bold |
+
+> You can also pass the short code string directly as the `Font` property value without using the constants.
